@@ -25,7 +25,7 @@ internal object LzConfig : AutoSavePluginConfig("LaiZhiConfig"){
     var ProtectImageList:List<String?> by value()
 
     @ValueDescription("消息发送延迟")
-    var messageIntervalTime :Long by value(500L);
+    var messageIntervalTime :Long by value(120L);
 
     @ValueDescription("黑名单")
     var Blacklist:List<Long> by value()

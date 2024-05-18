@@ -6,7 +6,7 @@
 [![Static Badge](https://img.shields.io/badge/release-2.0.0-blue)](https://github.com/Long-Chuan-Club/LaiZhiChatPlugin/releases)
 
 
-:warning:  **本插件没有配置文件**<br>
+:warning:  **使用前需要先下载 [MiSans](https://hyperos.mi.com/font/zh/download/) 字体**<br>
 ## 主要功能 ：关键字触发发图
 
 无需配置，直接扔进 `bot/plugins` 即可使用

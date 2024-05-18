@@ -10,6 +10,7 @@ import util.skia.impl.ImagePreviewDrawer
 import util.skia.impl.MaskDrawer
 import java.io.File
 import java.io.FileOutputStream
+import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Private
 
 class ImageDrawerComposer(
     private val outputWidth: Int,
@@ -19,17 +20,29 @@ class ImageDrawerComposer(
     private val numImagesPerRow: Int,
     private val groupDetail: GroupDetail,
     private val lt: Float,
-    private val infoHeight:Int
+    private val infoHeight:Int,
+    private val targetSize:Float
 ) {
 
     fun draw(): File {
         val surface = Surface.makeRasterN32Premul(outputWidth, outputHeight)
         val canvas = surface.canvas
 
+        val mainHeight = outputWidth / 2f - (outputWidth / 2 - lt)
+
         val drawers = listOf(
             BackgroundDrawer(outputWidth, outputHeight, titleText),
-            ImagePreviewDrawer(fileList, outputWidth, outputHeight, numImagesPerRow, /* 其他参数 */),
             MaskDrawer(outputWidth, outputHeight,infoHeight,lt),
+            ImagePreviewDrawer(
+                fileList,
+                outputWidth,
+                outputHeight,
+                numImagesPerRow,
+                infoHeight,
+                lt,
+                targetSize,
+                ),
+
             GroupInfoDrawer(outputWidth,groupDetail,infoHeight,lt)
         )
 

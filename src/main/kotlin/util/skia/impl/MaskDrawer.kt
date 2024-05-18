@@ -19,7 +19,7 @@ class MaskDrawer(
         val maskRRectInfo  = RRect.makeXYWH(
             lt,
             lt,
-            (outputWidth - 80).toFloat(),
+            (outputWidth - lt*2).toFloat(),
             infoHeight.toFloat(),
             cornerRadius
         )

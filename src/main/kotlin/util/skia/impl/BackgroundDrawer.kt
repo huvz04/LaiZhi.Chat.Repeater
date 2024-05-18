@@ -17,7 +17,7 @@ class BackgroundDrawer(
             isAntiAlias = true
         }
 
-        val inputStream = this::class.java.getResourceAsStream("/image/01.jpg")
+        val inputStream = this::class.java.getResourceAsStream("/image/06.jpg")
         val originalImage = ImageIO.read(inputStream).toImage()
 
         // 计算缩放比例

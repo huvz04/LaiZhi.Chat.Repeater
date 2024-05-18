@@ -24,10 +24,10 @@ import kotlin.coroutines.CoroutineContext
 
 object myEvent : SimpleListenerHost(){
 
-    override fun handleException(context: CoroutineContext, exception: Throwable) {
-        // 处理 onMessage 中未捕获的异常
-        PluginMain.logger.error("未知错误")
-    }
+//    override fun handleException(context: CoroutineContext, exception: Throwable) {
+//        // 处理 onMessage 中未捕获的异常
+//        PluginMain.logger.error("未知错误")
+//    }
     var isKey:Boolean = false;
     @EventHandler
     suspend fun GroupMessageEvent.onMessage(): ListeningStatus { // 可以抛出任何异常, 将在 handleException 处理

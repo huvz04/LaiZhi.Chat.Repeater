@@ -1,11 +1,20 @@
 package org.longchuanclub.mirai.plugin.entity
 
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.Id
+import jakarta.persistence.Table
+
+@Entity
+@Table(name="group_detail")
 data class GroupDetail(
-    val id:String,
-    val avatar:ByteArray,
-    val name:String,
-    val total:Int,
-    val galleryNumber:Int,
+    @Id
+    @GeneratedValue
+    val id:String ="114514",
+    val avatar:ByteArray = ByteArray(0),
+    val name:String="群聊",
+    var total:Int=0,
+    val galleryNumber:Int=0,
 ) {
 
     override fun equals(other: Any?): Boolean {

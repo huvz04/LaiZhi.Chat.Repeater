@@ -2,7 +2,11 @@ package org.longchuanclub.mirai.plugin
 
 import org.longchuanclub.mirai.plugin.entity.GroupDetail
 import util.skia.ImageDrawerComposer
+import java.io.BufferedInputStream
 import java.io.File
+import java.io.FileInputStream
+import java.math.BigInteger
+import java.security.MessageDigest
 
 fun main() {
 //        val filepath = File("C:\\Users\\dache\\Pictures\\re")
@@ -19,6 +23,8 @@ fun main() {
 //            }
 //        }
 //    }
+
+
     val filePath = "C:\\re\\va.jpg"
     val s = File(filePath)
     val groupDetail = GroupDetail(
@@ -29,12 +35,12 @@ fun main() {
         14
         );
     val composer = ImageDrawerComposer(
-        900, 1100,
+        1080, 1100,
         "titleText", arrayListOf(), 4,
         groupDetail,
-
         40f,
-        100
+        100,
+        185f
     )
     val outputFile = composer.draw()
     // 指定本地目录路径
@@ -45,9 +51,18 @@ fun main() {
     val localFilePath = "$localDirectoryPath/outimg.png"
 
      //将 ExternalResource 对象保存到本地文件
-    outputFile.inputStream().use { inputStream ->
+    var fiile = outputFile.inputStream().use { inputStream ->
         File(localFilePath).outputStream().use { outputStream ->
             inputStream.copyTo(outputStream)
         }
     }
+    val file = File(localFilePath)
+    val md5 = getMD5(file.readBytes())
+    println("MD5 of $file is: $md5")
     }
+fun getMD5(bytes: ByteArray): String {
+    val md = MessageDigest.getInstance("MD5")
+    md.update(bytes)
+    val digest = md.digest()
+    return BigInteger(1, digest).toString(16).padStart(32, '0')
+}

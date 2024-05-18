@@ -38,61 +38,74 @@ class GroupInfoDrawer
         canvas.drawImage(imageavatar,avatarX,avatarY)
 
 
-        // 绘制群名称和群号
-        val nameX = avatarX + avatarRadius + 20f + lt
-        val nameY = avatarY - 10f + lt
-        val nametextFont = Font(Typeface.makeFromName("微软雅黑",FontStyle.BOLD), 24f)
-        val textPaint = Paint().apply {
+        // 绘制群名称
+        val nameX = avatarX + avatarRadius + 25f + lt
+        val nameY = avatarY - 5f + lt
+        val TitleFont = Font(Typeface.makeFromName("MiSans",FontStyle.BOLD), 24f)
+        val TitlePaint = Paint().apply {
             color = Color.BLACK
         }
-        canvas.drawString(groupDetail.name, nameX, nameY, nametextFont,textPaint)
+        canvas.drawString(groupDetail.name, nameX, nameY,TitleFont,TitlePaint)
         val infoPaint = Paint().apply {
             color = Color.makeRGB(139,139,156)
         }
-        val idtextFont = Font(Typeface.makeFromName("微软雅黑",FontStyle.NORMAL), 16f)
+        val idtextFont = Font(Typeface.makeFromName("MiSans",FontStyle.ITALIC), 20f)
+        // 群号
 
-
-        val detailtFont = Font(Typeface.makeFromName("微软雅黑",FontStyle.NORMAL), 20f)
-        canvas.drawString(" ${groupDetail.id}", nameX, nameY + 30f,idtextFont, infoPaint)
-        val infoText = "总图片数: ${groupDetail.total} "
-        // 绘制其他信息
-        val infoX = outputWidth  - idtextFont.measureText(infoText).width - 200f
+        canvas.drawString(" ${groupDetail.id}", nameX, nameY + 35f,idtextFont, infoPaint)
+        val infoText = " 图片 | ${groupDetail.total} "
+        // 计算 =  图片坐标x+ 半径 + 标题长度    + lt 缓冲
+        val infoX = avatarX + avatarRadius + TitleFont.measureTextWidth(groupDetail.name) + lt + 60f
+//        val infoX = outputWidth  - idtextFont.measureText(infoText).width - 200f
         val infoY = nameY
-        canvas.drawImage(getInfo(detailtFont,infoText),infoX,infoY)
+        val detailtFont = Font(Typeface.makeFromName("MiSans",FontStyle.NORMAL), 20f)
 
+        val webpaint = Paint().apply {
+            color = Color.makeRGB( 	255,142,60)
+        }
+        val textPaint2 = Paint().apply {
+//            color = Color.BLACK
+            color = Color.makeRGB(13,13,13)
+            isAntiAlias = true
+        }
+        canvas.drawImage(getInfo(detailtFont,infoText,webpaint,textPaint2),infoX,infoY)
+        // 画廊数
+        val infoX2 = infoX +  idtextFont.measureText(infoText).width + 32f
+        val webpaint2 = Paint().apply {
+            color = Color.makeRGB(7,166,128)
+        }
+        val infoText2 = " 群成员 | ${groupDetail.galleryNumber} "
+        val textPaint3 = Paint().apply {
+            color = Color.makeRGB(13,13,13)
+            isAntiAlias = true
+        }
+        canvas.drawImage(getInfo(detailtFont,infoText2,webpaint2,textPaint3),infoX2,infoY)
 
     }
 
 
-    fun getInfo(font:Font,info:String):Image{
-        val surfaceBitmap2 = Surface.makeRasterN32Premul(infoHeight, infoHeight)
+    private fun getInfo(font:Font, info:String, backgroundPaint:Paint,textPaint: Paint):Image{
+        val surfaceBitmap2 = Surface.makeRasterN32Premul(infoHeight+90, infoHeight)
 
         val canvas3 = surfaceBitmap2.canvas
-        val rect = RRect.makeXYWH(0f,0f,font.measureText(info).width+10f,font.measureText(info).height+10f,20f)
-        val textPaint3 = Paint().apply {
-            color = Color.BLACK
-            isAntiAlias = true
-        }
-        val webpaint = Paint().apply {
-            color = Color.makeRGB(20,20,20)
-            strokeWidth = 2f // 设置画笔宽度为 3 像素
-            strokeJoin = PaintStrokeJoin.ROUND
-        }
+        val rect = RRect.makeXYWH(5f,5f,font.measureText(info).width+20f,font.measureText(info).height+10f,10f)
+
+
         val paint = Paint().apply {
             color = Color.makeRGB(20,20,20)
-            strokeWidth = 2f // 设置画笔宽度为 3 像素
+            strokeWidth = 1f // 设置画笔宽度为 3 像素
             strokeJoin = PaintStrokeJoin.ROUND
             mode = PaintMode.STROKE
-            imageFilter = ImageFilter.makeBlur(1f,1f,FilterTileMode.REPEAT)
+            imageFilter = ImageFilter.makeBlur(1f,1f,FilterTileMode.MIRROR)
         }
-        canvas3.drawRRect(rect,paint)
+        canvas3.drawRRect(rect,backgroundPaint)
 //        canvas3.clipPath(rectdetailPath)
         canvas3.drawPath(
             Path().apply {
                 addRRect(rect)
             }
             ,paint)
-        canvas3.drawString(info, font.measureText(info).width, font.measureText(info).height, font, textPaint3)
+        canvas3.drawString(info, 10f, 27f, font, textPaint)
 
 
        return surfaceBitmap2.makeImageSnapshot()
