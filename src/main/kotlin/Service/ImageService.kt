@@ -73,9 +73,9 @@ object ImageService {
     /**
      * 获取图片
      */
-    suspend fun getImage(qq: Long, name: String): ExternalResource {
+    suspend fun getImage(q1: Long, name: String): ExternalResource {
         return transaction(db) {
-            ImageFiles.select { (ImageFiles.qq eq qq.toString()) and (ImageFiles.about eq name) }
+            ImageFiles.select { (ImageFiles.qq eq q1.toString()) and (ImageFiles.about eq name) }
                 .map {
                     ImageFile(
                         0,
@@ -87,9 +87,9 @@ object ImageService {
                         it[ImageFiles.url]
                     )
                 }
-                .randomOrNull() ?: throw IllegalArgumentException("No image found for group $qq and name $name")
+                .randomOrNull() ?: throw IllegalArgumentException("No image found for group $q1 and name $name")
         }.let {
-            val ParentfilePath = "LaiZhi/$qq/$name/${it.md5}.${it.type}}"
+            val ParentfilePath = "LaiZhi/$q1/$name/${it.md5}.${it.type}"
             val file = PluginMain.resolveDataFile(ParentfilePath)
             file.toExternalResource().toAutoCloseable()
         }

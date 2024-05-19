@@ -172,7 +172,9 @@ object ImageEvent : SimpleListenerHost(){
                 SendTask.sendMessage(group, "目录下找不到图片噢")
             }
 
+            res.closed
         }
+
     }
 
     /**
