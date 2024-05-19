@@ -1,6 +1,7 @@
 package org.longchuanclub.mirai.plugin
 
 import org.longchuanclub.mirai.plugin.entity.GroupDetail
+import org.longchuanclub.mirai.plugin.entity.ImageFile
 import util.skia.ImageDrawerComposer
 import java.io.BufferedInputStream
 import java.io.File
@@ -34,9 +35,30 @@ fun main() {
         10,
         14
         );
+    val newMap:HashMap<String,List<ImageFile>> = hashMapOf()
+    val v1 = ImageFile();
+    v1.type="jpg";v1.md5="cjj1";v1.url="C:\\re\\114514\\test\\cjj1.jpg"
+    v1.about="cjj";
+    var v2 = ImageFile();
+    v2.type="jpg";v2.md5="zms";v2.url="C:\\re\\114514\\真没睡\\zms.jpg"
+    v2.about="真没睡";
+    newMap.put("cjj",arrayListOf(v1))
+    newMap.put("真没睡",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡2",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡3",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡4",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡6",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡5",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡7",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡8",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡9",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡12",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡33",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡21",arrayListOf(v2,v1,v1))
+    newMap.put("真没睡21",arrayListOf(v2,v1,v1))
     val composer = ImageDrawerComposer(
-        1080, 1100,
-        "titleText", arrayListOf(), 4,
+        1430, (newMap.size/6+1)*(185+40)+200,
+        "titleText", newMap, 6,
         groupDetail,
         40f,
         100,

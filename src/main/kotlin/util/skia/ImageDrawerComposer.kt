@@ -4,6 +4,7 @@ import org.jetbrains.skia.EncodedImageFormat
 import org.jetbrains.skia.Surface
 import org.longchuanclub.mirai.plugin.entity.GroupDetail
 import org.longchuanclub.mirai.plugin.entity.ImageData
+import org.longchuanclub.mirai.plugin.entity.ImageFile
 import org.longchuanclub.mirai.plugin.util.skia.impl.GroupInfoDrawer
 import util.skia.impl.BackgroundDrawer
 import util.skia.impl.ImagePreviewDrawer
@@ -16,7 +17,7 @@ class ImageDrawerComposer(
     private val outputWidth: Int,
     private val outputHeight: Int,
     private val titleText: String,
-    private val fileList: List<ImageData>,
+    private val fileList: Map<String,List<ImageFile>>,
     private val numImagesPerRow: Int,
     private val groupDetail: GroupDetail,
     private val lt: Float,

@@ -1,26 +1,18 @@
 package org.longchuanclub.mirai.plugin.entity
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.Id
-import jakarta.persistence.Table
 
-@Entity
-@Table(name="group_detail")
-data class GroupDetail(
-    @Id
-    @GeneratedValue
-    val id:String ="114514",
-    val avatar:ByteArray = ByteArray(0),
-    val name:String="群聊",
-    var total:Int=0,
-    val galleryNumber:Int=0,
+public data class GroupDetail(
+    val id:String,
+    val avatar:ByteArray,
+    val name:String,
+    var total:Int,
+    val galleryNumber:Int,
 ) {
-
+    // 添加无参的辅助构造函数
+    constructor() : this("114514", ByteArray(0), "群聊", 0, 0)
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-
         other as GroupDetail
 
         if (id != other.id) return false
@@ -38,4 +30,5 @@ data class GroupDetail(
         result = 31 * result + total
         return result
     }
+
 }

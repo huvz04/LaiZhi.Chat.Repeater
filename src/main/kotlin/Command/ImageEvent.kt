@@ -1,7 +1,6 @@
-package org.longchuanclub.mirai.plugin.Service
+package org.longchuanclub.mirai.plugin.Command
 
-import io.ktor.client.plugins.api.*
-import net.mamoe.mirai.console.plugin.version
+import entity.LZException
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.event.EventHandler
@@ -10,19 +9,17 @@ import net.mamoe.mirai.event.SimpleListenerHost
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.message.data.*
-import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import net.mamoe.mirai.utils.info
 import org.longchuanclub.mirai.plugin.PluginMain
-import org.longchuanclub.mirai.plugin.PluginMain.logger
+import org.longchuanclub.mirai.plugin.Service.ImageService
 import org.longchuanclub.mirai.plugin.config.LzConfig
 import org.longchuanclub.mirai.plugin.util.ImageUtils
 import org.longchuanclub.mirai.plugin.util.SendTask
 import java.io.File
 import java.time.Instant
-import kotlin.coroutines.CoroutineContext
 
-object myEvent : SimpleListenerHost(){
+object ImageEvent : SimpleListenerHost(){
 
 //    override fun handleException(context: CoroutineContext, exception: Throwable) {
 //        // 处理 onMessage 中未捕获的异常
@@ -51,26 +48,28 @@ object myEvent : SimpleListenerHost(){
 
 
         }
-        else if(msg.startsWith("#clear"))
-        {
-            if( sender.id== LzConfig.adminQQid){
-                var filename = msg.drop(6).trim()
-                clear(filename)
-                SendTask.sendMessage(group,"清理成功")
-                return ListeningStatus.LISTENING
-
-            }
-            else{
-                SendTask.sendMessage(group,At(sender)+"你没权限执行")
-                return ListeningStatus.LISTENING
-            }
-        }
+        //TODO 从消息记录器获取
+//        else if(msg.startsWith("#remove"))
+//        {
+//            if( sender.id== LzConfig.adminQQid){
+//                val filename = msg.drop(6).trim()
+//                ImageService.removeImage(sender.group.id,filename)
+//                SendTask.sendMessage(group,"清理成功")
+//                return ListeningStatus.LISTENING
+//
+//            }
+//            else{
+//                SendTask.sendMessage(group,At(sender)+"你没权限执行")
+//                return ListeningStatus.LISTENING
+//            }
+//        }
+        //TODO 后续增加分人分群控制
         else if(msg == "开关关键字"){
             if(isKey){
-                isKey=false;
+                isKey =false;
                 SendTask.sendMessage(group,"哼哼，接下来你只能使用\"来只\"获取啦")
             }else {
-                isKey=true;
+                isKey =true;
                 SendTask.sendMessage(group,"已经打开关键字检索辣")
             }
         }
@@ -102,9 +101,7 @@ object myEvent : SimpleListenerHost(){
                 if(msg.startsWith("来只")){
                     var getnum = -1;
                     val strlist = msg.split(" ");
-                    PluginMain.logger.info("获取到strlist数组${strlist}")
                     if(strlist.isNotEmpty()){
-                        //没有空格分割 比如”来只夏“
                         if(strlist[0].length>2)
                         {
                             PluginMain.logger.info("开始分割数组")
@@ -136,7 +133,6 @@ object myEvent : SimpleListenerHost(){
                     else{
                         strname = msg.drop("来只".length).trim()
                     }
-                    PluginMain.logger.info("接收到来只参数，参数1:${strname}，参数2:${getnum}")
                     getImg(strname,getnum)
                 }
 
@@ -161,7 +157,7 @@ object myEvent : SimpleListenerHost(){
      */
     private suspend fun GroupMessageEvent.getImg(arg: String?, arg1 : Int) {
         if (arg != null) {
-            val res = ImageUtils.GetImage(group,arg,arg1)
+            val res = ImageService.getImage(sender.group.id,arg)
             //如果不为空，就上传
 
             if (res != null) {
@@ -216,12 +212,16 @@ object myEvent : SimpleListenerHost(){
                 if(image!=null) {
                     try{
 
-                        arg?.let { it1 -> ImageUtils.saveImage(group,it1,image) }
+                        arg?.let { it1 -> ImageService.saveImage(this.subject.id,it1,image) }
                         SendTask.sendMessage(group, chain+ PlainText("保存成功噢"));
-                    }catch (e:Exception)
-                    {
-                        SendTask.sendMessage(group,At(sender1)+"保存失败，请尝试使用电脑qq发送")
+                    }catch (e: LZException){
+                        SendTask.sendMessage(group,"该图库已存在相同图片哦")
                     }
+//                    catch (e:Exception)
+//                    {
+//                        PluginMain.logger.info(e)
+//                        SendTask.sendMessage(group,At(sender1)+"保存失败，请尝试使用电脑NTqq发送")
+//                    }
 
                     return@subscribe ListeningStatus.STOPPED
                 }
