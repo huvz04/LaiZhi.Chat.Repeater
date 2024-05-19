@@ -122,8 +122,9 @@ object ImageService {
                     "image/gif" -> "gif"
                     else -> "jpg"
                 }
-
-        PluginMain.logger.info("获取 ${fileType}")
+        val filePath = ParentfilePath +  "\\${md5a}.${fileType}"
+        val file  = PluginMain.resolveDataFile(filePath)
+        file.writeBytes(imageByte)
         transaction(db) {
             val entity = ImageFiles.selectAll()
                 .where { ImageFiles.md5 eq md5a.toString() }
