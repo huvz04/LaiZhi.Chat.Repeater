@@ -1,6 +1,7 @@
 package org.longchuanclub.mirai.plugin.Command
 
 import entity.LZException
+import io.ktor.client.plugins.api.*
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.event.EventHandler
@@ -9,45 +10,30 @@ import net.mamoe.mirai.event.SimpleListenerHost
 import net.mamoe.mirai.event.events.GroupMessageEvent
 import net.mamoe.mirai.event.globalEventChannel
 import net.mamoe.mirai.message.data.*
+import net.mamoe.mirai.message.data.Image.Key.queryUrl
 import net.mamoe.mirai.utils.ExternalResource.Companion.uploadAsImage
 import net.mamoe.mirai.utils.info
+import okhttp3.Request
 import org.longchuanclub.mirai.plugin.PluginMain
 import org.longchuanclub.mirai.plugin.Service.ImageService
 import org.longchuanclub.mirai.plugin.config.LzConfig
+import org.longchuanclub.mirai.plugin.util.HttpClient
 import org.longchuanclub.mirai.plugin.util.ImageUtils
 import org.longchuanclub.mirai.plugin.util.SendTask
 import java.io.File
 import java.time.Instant
+import kotlin.coroutines.CoroutineContext
 
 object ImageEvent : SimpleListenerHost(){
 
-//    override fun handleException(context: CoroutineContext, exception: Throwable) {
-//        // 处理 onMessage 中未捕获的异常
-//        PluginMain.logger.error("未知错误")
-//    }
+    override fun handleException(context: CoroutineContext, exception: Throwable) {
+        PluginMain.logger.error("未知错误${exception}")
+    }
     var isKey:Boolean = false;
     @EventHandler
     suspend fun GroupMessageEvent.onMessage(): ListeningStatus { // 可以抛出任何异常, 将在 handleException 处理
         val msg = message.content;
         val strname : String?
-        if(LzConfig.Graphicslist.contains(msg)){
-            val files  = countFile(group)
-            var cnt = 0;
-            SendTask.sendMessage(
-                group,
-                buildMessageChain {
-                    At(sender.id)
-                    +"检索到的图库如下:"
-                    for(s in files) {
-                        cnt++;
-                        +PlainText("[$s], ")
-                    }
-                    }
-
-                )
-
-
-        }
         //TODO 从消息记录器获取
 //        else if(msg.startsWith("#remove"))
 //        {
@@ -64,7 +50,7 @@ object ImageEvent : SimpleListenerHost(){
 //            }
 //        }
         //TODO 后续增加分人分群控制
-        else if(msg == "开关关键字"){
+        if(msg == "开关关键字"){
             if(isKey){
                 isKey =false;
                 SendTask.sendMessage(group,"哼哼，接下来你只能使用\"来只\"获取啦")
@@ -73,10 +59,6 @@ object ImageEvent : SimpleListenerHost(){
                 SendTask.sendMessage(group,"已经打开关键字检索辣")
             }
         }
-        /**
-         *  匹配添加指令
-         */
-
 
         /**
          * 根据关键字匹配
@@ -84,7 +66,11 @@ object ImageEvent : SimpleListenerHost(){
         else if(msg.startsWith("添加")){
             strname = msg.drop("添加".length).trim()
             Lzsave(strname,sender)
-
+            return ListeningStatus.LISTENING
+        }
+        else if(msg == "#group dump"){
+            ImageService.updateGrouplist(group.id)
+            SendTask.sendMessage(group,"更新成功")
             return ListeningStatus.LISTENING
         }
         else{
@@ -104,9 +90,7 @@ object ImageEvent : SimpleListenerHost(){
                     if(strlist.isNotEmpty()){
                         if(strlist[0].length>2)
                         {
-                            PluginMain.logger.info("开始分割数组")
                             strname = strlist[0].drop(2)
-                            PluginMain.logger.info("arg:1${strname}")
                             if(strlist.size==2){
                                 try {
                                     getnum = strlist[1].toInt();
@@ -116,9 +100,7 @@ object ImageEvent : SimpleListenerHost(){
                                 }
                             }
                         }
-                        //"来只 夏"
                         else{
-                            //直接提取
                             strname = strlist[1].trim()
                             if(strlist.size==3){
                                 try {
@@ -140,7 +122,7 @@ object ImageEvent : SimpleListenerHost(){
 
         }
 
-        return ListeningStatus.LISTENING // 表示继续监听事件
+        return ListeningStatus.LISTENING
     }
     private  fun countFile(group: Group): List<String> {
         val filenamelist = mutableListOf<String>();
@@ -193,9 +175,7 @@ object ImageEvent : SimpleListenerHost(){
             }
         }
 
-    }
-
-    /**
+    }/**
      * 保存图库
      */
     private suspend fun GroupMessageEvent.Lzsave(arg: String?, sender1: Member)
@@ -213,8 +193,21 @@ object ImageEvent : SimpleListenerHost(){
 
                 if(image!=null) {
                     try{
+                        val url2 = image.queryUrl()
+                        val request = Request.Builder()
+                            .url(url2)
+                            .build()
+                        val response = HttpClient.okHttpClient.newCall(request).execute()
+                        val contentType = response.header("Content-Type")
+                        val fileType = when (contentType) {
+                            "image/jpeg" -> "jpg"
+                            "image/png" -> "png"
+                            "image/gif" -> "gif"
+                            else -> "jpg"
+                        }
 
-                        arg?.let { it1 -> ImageService.saveImage(this.subject.id,it1,image) }
+                        val imageByte = response.body!!.bytes()
+                        arg?.let { it1 -> ImageService.saveImage(this.subject.id,it1,imageByte,fileType) }
                         SendTask.sendMessage(group, chain+ PlainText("保存成功噢"));
                     }catch (e: LZException){
                         SendTask.sendMessage(group,"该图库已存在相同图片哦")

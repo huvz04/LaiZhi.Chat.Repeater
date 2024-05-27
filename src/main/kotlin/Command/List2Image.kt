@@ -59,7 +59,7 @@ object List2Image :SimpleCommand(PluginMain,"获取图库",description = "获取
             list2.add(i)
             newMap[i.about] = list2
         }
-
+        PluginMain.logger.info(newMap.toString())
         val composer = ImageDrawerComposer(
             1430, (newMap.size/6+1)*(185+40)+200,
             "titleText", newMap, 6,
