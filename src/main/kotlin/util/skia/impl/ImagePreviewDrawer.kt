@@ -2,12 +2,9 @@ package util.skia.impl
 
 import org.jetbrains.skia.*
 import org.longchuanclub.mirai.plugin.PluginMain
-import org.longchuanclub.mirai.plugin.entity.ImageData
 import org.longchuanclub.mirai.plugin.entity.ImageFile
-import org.longchuanclub.mirai.plugin.util.graphicsUtil
 import org.longchuanclub.mirai.plugin.util.skia.ImageDrawer
 import java.io.File
-import kotlin.random.Random
 
 class ImagePreviewDrawer(
     private val fileList: Map<String,List<ImageFile>>,
@@ -42,7 +39,8 @@ class ImagePreviewDrawer(
                 val infoName = getInfo(font, chs.about, detailPaint, textPaint)
                 canvas.drawImage(infoName, currentX +15, currentY )
 
-
+                val infoNum = getNumberDetail(font,fileList.size.toString())
+                canvas.drawImage(infoNum,currentX+imageDetail.width-10f,currentY+imageDetail.height-10f)
                 currentX += targetSize + lt
                 rowCount++
                 if (rowCount >= numImagesPerRow) {
@@ -149,7 +147,7 @@ class ImagePreviewDrawer(
 
     }
 
-    private fun getNumberDetail(font:Font,number:String,backgroundPaint: Paint,textPaint: Paint):Image{
+    private fun getNumberDetail(font:Font,number:String):Image{
         val surfaceBitmap2 = Surface.makeRasterN32Premul(infoHeight, infoHeight)
         val canvas3 = surfaceBitmap2.canvas
         val circlePaint = Paint().apply {
@@ -157,13 +155,13 @@ class ImagePreviewDrawer(
             mode = PaintMode.FILL
         }
         //绘制右上角的圆
-        canvas3.drawCircle(15f,15f,20f,circlePaint)
+        canvas3.drawCircle(15f,15f,15f,circlePaint)
         val textCirclePaint = Paint().apply {
             color = Color.WHITE
             Paint
         }
         val textWith1 = font.measureText(number)
-        canvas3.drawString(number, 10f, 10f, font,textCirclePaint)
+        canvas3.drawString(number, 15f-textWith1.width+2f, 15f-textWith1.height+1f, font,textCirclePaint)
         return surfaceBitmap2.makeImageSnapshot()
     }
 }
