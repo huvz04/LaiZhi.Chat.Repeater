@@ -162,7 +162,28 @@ object ImageService {
             file.toExternalResource().toAutoCloseable()
         }
     }
-
+    suspend fun getRandomImage(q1: Long): ExternalResource {
+        return transaction(db) {
+            ImageFiles.selectAll()
+                .where { (ImageFiles.qq eq q1.toString()) }
+                .map {
+                    ImageFile(
+                        0,
+                        it[ImageFiles.md5],
+                        it[ImageFiles.qq],
+                        it[ImageFiles.count],
+                        it[ImageFiles.about],
+                        it[ImageFiles.type],
+                        it[ImageFiles.url]
+                    )
+                }
+                .randomOrNull()
+        }.let {
+            val ParentfilePath = "LaiZhi/$q1/${it?.about}/${it?.md5}.${it?.type}"
+            val file = PluginMain.resolveDataFile(ParentfilePath)
+            file.toExternalResource().toAutoCloseable()
+        }
+    }
     /**
      * 保存图片信息
      */

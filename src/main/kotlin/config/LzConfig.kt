@@ -28,7 +28,7 @@ internal object LzConfig : AutoSavePluginConfig("LaiZhiConfig"){
 
     @ValueDescription("获取图库指令列表")
     var Graphicslist:List<String> by value(listOf("#获取图库","#图库","本群图库"))
-
-
+    @ValueDescription("开启群聊")
+    var enablelist:List<String> by value(listOf("114514"))
 
 }

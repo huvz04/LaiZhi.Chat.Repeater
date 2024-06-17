@@ -17,7 +17,7 @@ class ImagePreviewDrawer(
     // 其他参数
 ) : ImageDrawer {
     override fun draw(canvas: Canvas) {
-        val font = Font(Typeface.makeFromName("MiSans",FontStyle.NORMAL), 20f)
+        val font = Font(Typeface.makeFromName("MiSans",FontStyle.BOLD), 20f)
         val detailPaint = Paint().apply { color = Color.makeRGB(173, 216, 230) }
         val webPaint = Paint().apply { color = Color.makeRGB(240, 248, 255) }
         val ccPaint = Paint().apply { color = Color.makeRGB(242, 80, 66) }
@@ -30,7 +30,8 @@ class ImagePreviewDrawer(
         var rowCount = 0
 
         for ((_, fileList) in fileList) {
-            val chs = fileList[0];
+            val randoms = fileList.indices.random()
+            val chs = fileList[randoms];
             val file = PluginMain.resolveDataFile(chs.url+"\\${chs.md5}.${chs.type}") // 使用第一个文件
             try {
                 val imageDetail = drawImageDetail(webPaint, file)
@@ -154,14 +155,15 @@ class ImagePreviewDrawer(
             color = Color.makeRGB(242,80,66)
             mode = PaintMode.FILL
         }
-        //绘制右上角的圆
+        //绘制圆
         canvas3.drawCircle(15f,15f,15f,circlePaint)
         val textCirclePaint = Paint().apply {
             color = Color.WHITE
             Paint
         }
         val textWith1 = font.measureText(number)
-        canvas3.drawString(number, 15f-textWith1.width+2f, 15f-textWith1.height+1f, font,textCirclePaint)
+        if(number=="1") canvas3.drawString(number, 10f, 22f, font,textCirclePaint)
+        else canvas3.drawString(number, 15f-(textWith1.width/2f), 22f, font,textCirclePaint)
         return surfaceBitmap2.makeImageSnapshot()
     }
 }

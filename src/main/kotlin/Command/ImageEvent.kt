@@ -1,7 +1,6 @@
 package org.longchuanclub.mirai.plugin.Command
 
 import entity.LZException
-import io.ktor.client.plugins.api.*
 import net.mamoe.mirai.contact.Group
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.event.EventHandler
@@ -18,7 +17,6 @@ import org.longchuanclub.mirai.plugin.PluginMain
 import org.longchuanclub.mirai.plugin.Service.ImageService
 import org.longchuanclub.mirai.plugin.config.LzConfig
 import org.longchuanclub.mirai.plugin.util.HttpClient
-import org.longchuanclub.mirai.plugin.util.ImageUtils
 import org.longchuanclub.mirai.plugin.util.SendTask
 import java.io.File
 import java.time.Instant
@@ -50,20 +48,19 @@ object ImageEvent : SimpleListenerHost(){
 //            }
 //        }
         //TODO 后续增加分人分群控制
-        if(msg == "开关关键字"){
-            if(isKey){
-                isKey =false;
-                SendTask.sendMessage(group,"哼哼，接下来你只能使用\"来只\"获取啦")
-            }else {
-                isKey =true;
-                SendTask.sendMessage(group,"已经打开关键字检索辣")
-            }
-        }
+//        if(msg == "开关关键字"){
+//            if(!LzConfig.enablelist.contains(group.id.toString())){
+////                LzConfig.enablelist = mutableListOf(group.id.toString()).plus(LzConfig.enablelist)
+//                SendTask.sendMessage(group,"哼哼，接下来你只能使用\"来只\"获取啦")
+//            }else {
+//                SendTask.sendMessage(group,"已经打开关键字检索辣")
+//            }
+//        }
 
         /**
          * 根据关键字匹配
          */
-        else if(msg.startsWith("添加")){
+        if(msg.startsWith("添加")){
             strname = msg.drop("添加".length).trim()
             Lzsave(strname,sender)
             return ListeningStatus.LISTENING
@@ -73,9 +70,13 @@ object ImageEvent : SimpleListenerHost(){
             SendTask.sendMessage(group,"更新成功")
             return ListeningStatus.LISTENING
         }
+        else if(msg == "随机来只")
+        {
+            getRamImg()
+        }
         else{
             if(isKey){
-                var filenamelist = countFile(group)
+                val filenamelist = countFile(group)
                 for(eqstr  in filenamelist){
                     if(msg.contains(eqstr)) {
                         getImg(eqstr,-1)
@@ -142,23 +143,27 @@ object ImageEvent : SimpleListenerHost(){
             val res = ImageService.getImage(sender.group.id,arg)
             //如果不为空，就上传
 
-            if (res != null) {
-                this.subject.let {
-                    val img = res.uploadAsImage(it)
-                    res.closed
-                    if(res.isAutoClose) PluginMain.logger.info { "已经关闭了流" }
-                    SendTask.sendMessage(group, img);
-
-                }
-            } else {
-                SendTask.sendMessage(group, "目录下找不到图片噢")
+            this.subject.let {
+                val img = res.uploadAsImage(it)
+                res.closed
+                if(res.isAutoClose) PluginMain.logger.info { "已经关闭了流" }
+                SendTask.sendMessage(group, img);
             }
-
             res.closed
         }
 
     }
+    private suspend fun GroupMessageEvent.getRamImg() {
+            val res = ImageService.getRandomImage(sender.group.id)
+           this.subject.let {
+                val img = res.uploadAsImage(it)
+                res.closed
+                if(res.isAutoClose) PluginMain.logger.info { "已经关闭了流" }
+                SendTask.sendMessage(group, img);
+            }
+            res.closed
 
+    }
     /**
      * 清理图库
      */

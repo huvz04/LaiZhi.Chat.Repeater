@@ -6,6 +6,7 @@ import org.longchuanclub.mirai.plugin.util.skia.ImageDrawer
 
 class GroupInfoDrawer
     (
+    private val groupNum:Int,
     private val outputWidth: Int,
     private val groupDetail: GroupDetail,
     private val infoHeight:Int,
@@ -63,23 +64,36 @@ class GroupInfoDrawer
         val webpaint = Paint().apply {
             color = Color.makeRGB( 	255,142,60)
         }
-        val textPaint2 = Paint().apply {
+        val textPaint = Paint().apply {
 //            color = Color.BLACK
             color = Color.makeRGB(13,13,13)
             isAntiAlias = true
         }
-        canvas.drawImage(getInfo(detailtFont,infoText,webpaint,textPaint2),infoX,infoY)
+        canvas.drawImage(getInfo(detailtFont,infoText,webpaint,textPaint),infoX,infoY)
         // 画廊数
         val infoX2 = infoX +  idtextFont.measureText(infoText).width + 32f
         val webpaint2 = Paint().apply {
+            color = Color.makeRGB(106, 44, 112)
+        }
+        val infoText2 = " 图库 | ${groupNum} "
+        val textPaint2 = Paint().apply {
+            color = Color.makeRGB(250,244,250)
+            isAntiAlias = true
+        }
+        canvas.drawImage(getInfo(detailtFont,infoText2,webpaint2,textPaint2),infoX2,infoY)
+
+
+
+        val infoX3 = infoX2 +  idtextFont.measureText(infoText2).width + 32f
+        val webpaint3 = Paint().apply {
             color = Color.makeRGB(7,166,128)
         }
-        val infoText2 = " 群成员 | ${groupDetail.galleryNumber} "
+        val infoText3 = " 群成员 | ${groupDetail.galleryNumber} "
         val textPaint3 = Paint().apply {
             color = Color.makeRGB(13,13,13)
             isAntiAlias = true
         }
-        canvas.drawImage(getInfo(detailtFont,infoText2,webpaint2,textPaint3),infoX2,infoY)
+        canvas.drawImage(getInfo(detailtFont,infoText3,webpaint3,textPaint3),infoX3,infoY)
 
     }
 

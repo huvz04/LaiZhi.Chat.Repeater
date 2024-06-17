@@ -14,8 +14,8 @@ import org.longchuanclub.mirai.plugin.config.LzConfig
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         id = "io.huvz.laizhi",
-        name = "来只XX",
-        version = "0.3.2"
+        name = "laizhiXX",
+        version = "0.3.3"
     ) {
         author("Huvz")
         info(
