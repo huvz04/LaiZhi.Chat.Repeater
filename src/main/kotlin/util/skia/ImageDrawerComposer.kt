@@ -3,7 +3,6 @@ package util.skia
 import org.jetbrains.skia.EncodedImageFormat
 import org.jetbrains.skia.Surface
 import org.longchuanclub.mirai.plugin.entity.GroupDetail
-import org.longchuanclub.mirai.plugin.entity.ImageData
 import org.longchuanclub.mirai.plugin.entity.ImageFile
 import org.longchuanclub.mirai.plugin.util.skia.impl.GroupInfoDrawer
 import util.skia.impl.BackgroundDrawer
@@ -11,7 +10,6 @@ import util.skia.impl.ImagePreviewDrawer
 import util.skia.impl.MaskDrawer
 import java.io.File
 import java.io.FileOutputStream
-import kotlin.reflect.jvm.internal.impl.descriptors.Visibilities.Private
 
 class ImageDrawerComposer(
     private val outputWidth: Int,
@@ -44,7 +42,7 @@ class ImageDrawerComposer(
                 targetSize,
                 ),
 
-            GroupInfoDrawer(outputWidth,groupDetail,infoHeight,lt)
+            GroupInfoDrawer(fileList.size,outputWidth,groupDetail,infoHeight,lt)
         )
 
         drawers.forEach { drawer ->

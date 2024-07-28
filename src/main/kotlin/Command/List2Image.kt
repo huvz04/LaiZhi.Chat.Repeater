@@ -53,13 +53,21 @@ object List2Image :SimpleCommand(PluginMain,"获取图库",description = "获取
         val newMap:HashMap<String,ArrayList<ImageFile>> = hashMapOf()
         for(i in list){
             var list2 : ArrayList<ImageFile> = arrayListOf()
-            if(newMap[i.about] !=null) {
-                list2 = newMap[i.about]!!
-            }
-            list2.add(i)
-            newMap[i.about] = list2
-        }
 
+            try{
+                if(newMap[i.about] !=null) {
+                    list2 = newMap[i.about]!!
+                }
+                    list2.add(i)
+                    newMap[i.about] = list2
+            }catch (_:Exception){
+                PluginMain.logger.error("读取图片错误:i.url+\\${i.md5}.${i.type}....自动移除脏数据")
+                ImageService.deleteImage(i.id);
+            }
+
+
+
+        }
         val composer = ImageDrawerComposer(
             1430, (newMap.size/6+1)*(185+40)+200,
             "titleText", newMap, 6,
