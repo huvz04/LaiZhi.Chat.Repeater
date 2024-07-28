@@ -1,13 +1,13 @@
 plugins {
-    val kotlinVersion = "1.8.20"
+    val kotlinVersion = "1.9.22"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
     id("net.mamoe.mirai-console") version "2.16.0"
 
 }
-val kotlinVersion = "1.8.20"
+val kotlinVersion = "1.9.22"
 group = "LaiZhi.Chat.Repeater"
-version = "0.3.1"
+version = "0.4.0"
 val exposedVersion: String by project
 repositories {
     mavenCentral()

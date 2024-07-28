@@ -15,7 +15,7 @@ object PluginMain : KotlinPlugin(
     JvmPluginDescription(
         id = "io.huvz.laizhi",
         name = "来只XX",
-        version = "0.3.1"
+        version = "0.4.0"
     ) {
         author("Huvz")
         info(
@@ -35,8 +35,8 @@ object PluginMain : KotlinPlugin(
 
         CommandManager.registerCommand(List2Image)
         globalEventChannel().registerListenerHost(ImageEvent)
-        logger.info { "Plugin loaded" }
-        println(ImageService.selectImageDetail(114514))
+//        logger.info { "Plugin loaded" }
+//        println(ImageService.selectImageDetail(114514))
     }
 
     override fun onDisable() {
